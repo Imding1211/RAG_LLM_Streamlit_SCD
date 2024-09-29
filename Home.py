@@ -32,7 +32,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "system", "content": "使用繁體中文回答問題", "source": None}]
 
     if len(DatabaseController.calculate_existing_ids()) == 0:
-        info = "👈 Hi~ 資料庫是空的，請先到Data頁面點選上傳資料。"
+        info = "👈 Hi~ 資料庫是空的，請先到Database頁面點選上傳資料。"
         st.session_state.messages.append({"role": "assistant", "content": info, "source": None})
 
     else:

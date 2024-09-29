@@ -1,5 +1,6 @@
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 import pandas as pd
 import datetime
 import PyPDF2
@@ -14,6 +15,7 @@ class DatabaseController():
 
         self.time_zone = datetime.timezone(datetime.timedelta(hours=8))
         self.time_now  = datetime.datetime.now(tz=self.time_zone)
+        self.time_end  = datetime.datetime(9999, 12, 31, 0, 0, 0, tzinfo=self.time_zone)
 
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size         = 800,   # 每塊的大小
@@ -60,10 +62,47 @@ class DatabaseController():
 
     def add_PDF_to_chroma(self, file):
 
+        start_date = self.time_now.strftime('%Y/%m/%d %H:%M:%S')
+        end_date   = self.time_end.strftime('%Y/%m/%d %H:%M:%S')
+
         pdf = PyPDF2.PdfReader(file)
 
-        start_date = self.time_now.strftime('%Y/%m/%d %H:%M:%S')
-        end_date   = datetime.datetime(9999, 12, 31, 0, 0, 0, tzinfo=self.time_zone).strftime('%Y/%m/%d %H:%M:%S')
+        self.SCD_update_chroma(pdf, start_date)
+
+        self.add_to_chroma(pdf, start_date, end_date)
+
+#-----------------------------------------------------------------------------#
+
+    def SCD_update_chroma(self, pdf, start_date):
+
+        old_documents = self.database.get(where={"source": pdf.stream.name})
+
+        old_ids = old_documents["ids"]
+
+        if len(old_ids):
+
+            update_documents = []
+
+            for original_metadata, original_documents in zip(old_documents['metadatas'], old_documents['documents']):
+                
+                updated_metedata = {
+                "source"     : original_metadata['source'], 
+                "page"       : original_metadata['page'], 
+                "size"       : original_metadata['size'],
+                "start_date" : original_metadata['start_date'],
+                "end_date"   : start_date,
+                "latest"     : False
+                }
+
+                updated_document = Document(page_content=original_documents, metadata=updated_metedata)
+
+                update_documents.append(updated_document)
+
+            self.database.update_documents(ids=old_ids, documents=update_documents)
+
+#-----------------------------------------------------------------------------#
+
+    def add_to_chroma(self, pdf, start_date, end_date):
 
         for page in range(len(pdf.pages)):
             
@@ -71,7 +110,7 @@ class DatabaseController():
 
             metadata = {
             "source"     : pdf.stream.name, 
-            "page"       : page+1, 
+            "page"       : page + 1, 
             "size"       : pdf.stream.size,
             "start_date" : start_date,
             "end_date"   : end_date,
@@ -84,3 +123,4 @@ class DatabaseController():
 
             if len(documents):
                 self.database.add_documents(documents, ids=ids)
+

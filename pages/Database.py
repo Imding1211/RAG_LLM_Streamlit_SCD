@@ -122,6 +122,8 @@ df = DatabaseController.database_to_dataframes()
 
 df_event = df.loc[df.groupby(['source', 'start_date'])['page'].idxmax(), ['source', 'page', 'size', 'start_date', 'end_date', 'latest']]
 
+df_event = df_event.sort_values(by='start_date', ascending=False)
+
 event = col1.dataframe(
     df_event,
     column_config=event_config,
@@ -133,9 +135,9 @@ event = col1.dataframe(
 
 select_id = event.selection.rows
 
-df_selected = df_event.iloc[select_id][['source']]
+df_selected = df_event.iloc[select_id][['source', 'start_date']]
 
-df_result = df.merge(df_selected, on='source')
+df_result = df.merge(df_selected, on=['source', 'start_date'])
 
 st.divider()
 
