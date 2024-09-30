@@ -67,13 +67,13 @@ class DatabaseController():
 
         pdf = PyPDF2.PdfReader(file)
 
-        self.SCD_update_chroma(pdf, start_date)
+        self.update_chroma_scd(pdf, start_date)
 
         self.add_to_chroma(pdf, start_date, end_date)
 
 #-----------------------------------------------------------------------------#
 
-    def SCD_update_chroma(self, pdf, start_date):
+    def update_chroma_scd(self, pdf, start_date):
 
         old_documents = self.database.get(where={"source": pdf.stream.name})
 
@@ -124,3 +124,13 @@ class DatabaseController():
             if len(documents):
                 self.database.add_documents(documents, ids=ids)
 
+#-----------------------------------------------------------------------------#
+
+    def rollback_chroma_scd(self, rollback_list):
+
+        for rollback_info in rollback_list:
+            
+            rollback_documents = self.database.get(where={"end_date":rollback_info[1]})
+            print(rollback_documents)
+            #for original_metadata, original_documents in zip(old_documents['metadatas'], old_documents['documents']):
+        
