@@ -46,6 +46,7 @@ class DatabaseController():
             'size'       : [meta['size'] for meta in data['metadatas']],
             'start_date' : [meta['start_date'] for meta in data['metadatas']],
             'end_date'   : [meta['end_date'] for meta in data['metadatas']],
+            'version'    : [meta['version'] for meta in data['metadatas']],
             'latest'     : [meta['latest'] for meta in data['metadatas']],
             'documents'  : data['documents']
         })
@@ -67,9 +68,9 @@ class DatabaseController():
 
         pdf = PyPDF2.PdfReader(file)
 
-        self.update_chroma_scd(pdf, start_date)
+        version = self.update_chroma_scd(pdf, start_date)
 
-        self.add_to_chroma(pdf, start_date, end_date)
+        self.add_to_chroma(pdf, start_date, end_date, version)
 
 #-----------------------------------------------------------------------------#
 
@@ -91,6 +92,7 @@ class DatabaseController():
                 "size"       : original_metadata['size'],
                 "start_date" : original_metadata['start_date'],
                 "end_date"   : start_date,
+                "version"    : original_metadata['version'],
                 "latest"     : False
                 }
 
@@ -100,9 +102,14 @@ class DatabaseController():
 
             self.database.update_documents(ids=old_ids, documents=update_documents)
 
+            return int(original_metadata['version'])+1
+
+        else:
+            return 1
+
 #-----------------------------------------------------------------------------#
 
-    def add_to_chroma(self, pdf, start_date, end_date):
+    def add_to_chroma(self, pdf, start_date, end_date, version):
 
         for page in range(len(pdf.pages)):
             
@@ -114,6 +121,7 @@ class DatabaseController():
             "size"       : pdf.stream.size,
             "start_date" : start_date,
             "end_date"   : end_date,
+            "version"    : version,
             "latest"     : True
             }
 

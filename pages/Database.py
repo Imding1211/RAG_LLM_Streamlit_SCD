@@ -54,6 +54,12 @@ event_config = {
         max_chars=100, 
         width="small"
     ),
+    "version": st.column_config.TextColumn(
+        "版本", 
+        help="資料版本", 
+        max_chars=100, 
+        width="small"
+    ),
     "latest": st.column_config.TextColumn(
         "是否為最新資料", 
         help="資料內容是否為最新", 
@@ -93,6 +99,12 @@ selected_config = {
         max_chars=100, 
         width="small"
     ),
+    "version": st.column_config.TextColumn(
+        "版本", 
+        help="資料版本", 
+        max_chars=100, 
+        width="small"
+    ),
     "latest": st.column_config.TextColumn(
         "是否為最新資料", 
         help="資料內容是否為最新", 
@@ -120,7 +132,7 @@ if col2.button("更新"):
 
 df = DatabaseController.database_to_dataframes()
 
-df_event = df.loc[df.groupby(['source', 'start_date'])['page'].idxmax(), ['source', 'page', 'size', 'start_date', 'end_date', 'latest']]
+df_event = df.loc[df.groupby(['source', 'start_date'])['page'].idxmax(), ['source', 'page', 'size', 'start_date', 'end_date', 'version', 'latest']]
 
 df_event = df_event.sort_values(by='start_date', ascending=False)
 
@@ -142,7 +154,7 @@ df_result = df.merge(df_selected, on=['source', 'start_date'])
 st.divider()
 
 st.dataframe(
-    df_result[['source', 'page', 'documents', 'start_date', 'end_date', 'latest']],
+    df_result[['source', 'page', 'documents', 'start_date', 'end_date', 'version', 'latest']],
     column_config=selected_config,
     use_container_width=True, 
     hide_index=True
