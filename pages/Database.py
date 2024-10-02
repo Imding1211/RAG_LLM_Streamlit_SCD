@@ -128,7 +128,7 @@ col1, col2 = st.columns([9,1])
 
 if col2.button("更新"):
     for file in files:
-        DatabaseController.add_PDF_to_chroma(file)
+        DatabaseController.add_database(file)
 
 df = DatabaseController.database_to_dataframes()
 
@@ -164,7 +164,7 @@ if col2.button('刪除'):
 
     delete_source = df_result[['source', 'version']].values.tolist()
     delete_source = list(map(list, set(map(tuple, delete_source))))
-    DatabaseController.rollback_chroma_scd(delete_source)  
+    DatabaseController.rollback_database(delete_source)  
       
     delete_ids = df_result['ids'].values.tolist()
     DatabaseController.clear_database(delete_ids)
