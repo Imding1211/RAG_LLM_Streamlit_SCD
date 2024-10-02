@@ -68,24 +68,39 @@ class DatabaseController():
 
         pdf = PyPDF2.PdfReader(file)
 
-        version = self.update_chroma_scd(pdf, start_date)
+        current_version = self.get_current_version(pdf.stream.name)
 
-        self.add_to_chroma(pdf, start_date, end_date, version)
+        if current_version > 0:
+            self.update_chroma_scd(pdf, start_date, current_version)
+
+        self.add_to_chroma(pdf, start_date, end_date, current_version)
 
 #-----------------------------------------------------------------------------#
 
-    def update_chroma_scd(self, pdf, start_date):
+    def get_current_version(self, source):
+
+        version_list = self.database.get(where={"source": source})["metadatas"]
+        
+        if len(version_list):
+            current_version = max(item['version'] for item in version_list)
+        else:
+            current_version = 0
+
+        return current_version
+
+#-----------------------------------------------------------------------------#
+
+    def update_chroma_scd(self, pdf, start_date, current_version):
 
         old_documents = self.database.get(where={"source": pdf.stream.name})
 
-        old_ids = old_documents["ids"]
+        update_documents = []
+        update_ids       = []
 
-        if len(old_ids):
+        for ids, original_metadata, original_documents in zip(old_documents["ids"], old_documents['metadatas'], old_documents['documents']):
 
-            update_documents = []
+            if original_metadata['version'] == current_version:
 
-            for original_metadata, original_documents in zip(old_documents['metadatas'], old_documents['documents']):
-                
                 updated_metedata = {
                 "source"     : original_metadata['source'], 
                 "page"       : original_metadata['page'], 
@@ -96,20 +111,17 @@ class DatabaseController():
                 "latest"     : False
                 }
 
-                updated_document = Document(page_content=original_documents, metadata=updated_metedata)
+                update_document = Document(page_content=original_documents, metadata=updated_metedata)
 
-                update_documents.append(updated_document)
+                update_documents.append(update_document)
 
-            self.database.update_documents(ids=old_ids, documents=update_documents)
+                update_ids.append(ids)
 
-            return int(original_metadata['version'])+1
-
-        else:
-            return 1
+        self.database.update_documents(ids=update_ids, documents=update_documents)
 
 #-----------------------------------------------------------------------------#
 
-    def add_to_chroma(self, pdf, start_date, end_date, version):
+    def add_to_chroma(self, pdf, start_date, end_date, current_version):
 
         for page in range(len(pdf.pages)):
             
@@ -121,7 +133,7 @@ class DatabaseController():
             "size"       : pdf.stream.size,
             "start_date" : start_date,
             "end_date"   : end_date,
-            "version"    : version,
+            "version"    : current_version + 1,
             "latest"     : True
             }
 
@@ -136,9 +148,41 @@ class DatabaseController():
 
     def rollback_chroma_scd(self, rollback_list):
 
-        for rollback_info in rollback_list:
-            
-            rollback_documents = self.database.get(where={"end_date":rollback_info[1]})
-            print(rollback_documents)
-            #for original_metadata, original_documents in zip(old_documents['metadatas'], old_documents['documents']):
-        
+        for rollback_source, rollback_version in rollback_list:
+
+            version_list = self.database.get(where={"source": rollback_source})["metadatas"]
+
+            all_versions = sorted(set(item['version'] for item in version_list), reverse=True)
+
+            current_version = self.get_current_version(rollback_source)
+
+            if rollback_version == current_version:
+
+                end_date = self.time_end.strftime('%Y/%m/%d %H:%M:%S')
+
+                rollback_documents = self.database.get(where={"source":rollback_source})
+
+                update_documents = []
+                update_ids       = []
+
+                for ids, rollback_metadata, rollback_documents in zip(rollback_documents["ids"], rollback_documents['metadatas'], rollback_documents['documents']):
+
+                    if rollback_metadata['version'] == all_versions[1]:
+
+                        updated_metedata = {
+                        "source"     : rollback_metadata['source'], 
+                        "page"       : rollback_metadata['page'], 
+                        "size"       : rollback_metadata['size'],
+                        "start_date" : rollback_metadata['start_date'],
+                        "end_date"   : end_date,
+                        "version"    : rollback_metadata['version'],
+                        "latest"     : True
+                        }
+
+                        updated_document = Document(page_content=rollback_documents, metadata=updated_metedata)
+
+                        update_documents.append(updated_document)
+
+                        update_ids.append(ids)
+
+                self.database.update_documents(ids=update_ids, documents=update_documents)  

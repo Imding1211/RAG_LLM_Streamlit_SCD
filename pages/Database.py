@@ -161,11 +161,12 @@ st.dataframe(
     )
 
 if col2.button('刪除'):
+
+    delete_source = df_result[['source', 'version']].values.tolist()
+    delete_source = list(map(list, set(map(tuple, delete_source))))
+    DatabaseController.rollback_chroma_scd(delete_source)  
+      
     delete_ids = df_result['ids'].values.tolist()
     DatabaseController.clear_database(delete_ids)
-
-    delete_source = df_result[['source', 'start_date']].values.tolist()
-    delete_source = list(map(list, set(map(tuple, delete_source))))
-    DatabaseController.rollback_chroma_scd(delete_source)
 
     st.rerun()
