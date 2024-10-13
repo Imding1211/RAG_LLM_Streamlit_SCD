@@ -1,0 +1,11 @@
+{
+    "default": {
+        "prompt": "{context}\n\n---\n\n根據以上資料用繁體中文回答問題: {question}\n",
+        "LLM_models": [
+            "gemma2:2b"
+        ],
+        "embedding_models": [
+            "all-minilm"
+        ]
+    }
+}

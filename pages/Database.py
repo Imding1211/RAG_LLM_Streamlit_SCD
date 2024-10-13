@@ -117,6 +117,8 @@ selected_config = {
 
 st.title("資料庫")
 
+database_status = st.empty()
+
 files = st.file_uploader(
     "Upload a PDF file", 
     type="pdf", 
@@ -127,8 +129,14 @@ files = st.file_uploader(
 col1, col2 = st.columns([9,1])
 
 if col2.button("更新"):
-    for file in files:
-        DatabaseController.add_database(file)
+
+    with database_status.status('資料更新中...', expanded=True) as update_status:
+
+        for file in files:
+            DatabaseController.add_database(file)
+            st.write(f"{file.name}更新完成。")
+
+        update_status.update(label="資料更新完成!", state="complete", expanded=False)
 
 df = DatabaseController.database_to_dataframes()
 
@@ -162,11 +170,15 @@ st.dataframe(
 
 if col2.button('刪除'):
 
-    delete_source = df_result[['source', 'version']].values.tolist()
-    delete_source = list(map(list, set(map(tuple, delete_source))))
-    DatabaseController.rollback_database(delete_source)  
-      
-    delete_ids = df_result['ids'].values.tolist()
-    DatabaseController.clear_database(delete_ids)
+    with database_status.status('資料刪除中...', expanded=True) as remove_status:
+
+        delete_source = df_result[['source', 'version']].values.tolist()
+        delete_source = list(map(list, set(map(tuple, delete_source))))
+        DatabaseController.rollback_database(delete_source)
+          
+        delete_ids = df_result['ids'].values.tolist()
+        DatabaseController.clear_database(delete_ids)
+
+        remove_status.update(label="資料刪除完成!", state="complete", expanded=False)
 
     st.rerun()

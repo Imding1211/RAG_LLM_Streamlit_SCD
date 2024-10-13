@@ -18,8 +18,8 @@ class DatabaseController():
         self.time_end  = datetime.datetime(9999, 12, 31, 0, 0, 0, tzinfo=self.time_zone)
 
         self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size         = 800,   # 每塊的大小
-            chunk_overlap      = 80,    # 每塊之間的重疊部分
+            chunk_size         = 150,   # 每塊的大小
+            chunk_overlap      = 50,    # 每塊之間的重疊部分
             length_function    = len,   # 用於計算塊長度的函數
             is_separator_regex = False, # 是否使用正則表達式作為分隔符
             )

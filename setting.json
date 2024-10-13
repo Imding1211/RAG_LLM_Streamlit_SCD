@@ -1,0 +1,21 @@
+{
+    "default": {
+        "prompt": "{context}\n\n---\n\n根據以上資料用繁體中文回答問題: {question}\n",
+        "LLM_models": "gemma2:2b",
+        "embedding_models": "all-minilm"
+    },
+    "customize": {
+        "prompt": "",
+        "LLM_models": [
+            "許妹大胖胖",
+            "許22大豬豬",
+            "丁先生肚子餓"
+        ],
+        "embedding_models": [
+            "丁先生",
+            "丁先生肚子餓",
+            "丁先生肚子2",
+            "丁先生肚子22"
+        ]
+    }
+}

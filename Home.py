@@ -7,7 +7,7 @@ import streamlit as st
 
 #=============================================================================#
 
-LLM_MODEL       = "gemma2:2b"
+LLM_MODEL       = "gemma2:2b"#"jcai/llama3-taide-lx-8b-chat-alpha1:Q4_K_M"
 EMBEDDING_MODEL = "all-minilm"
 
 QUERY_NUM   = 5
