@@ -1,14 +1,17 @@
 
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from database_controller import DatabaseController
+from setting_controller import SettingController
 from query_controller import QueryController
 from langchain_chroma import Chroma
 import streamlit as st
 
 #=============================================================================#
 
-LLM_MODEL       = "gemma2:2b"#"jcai/llama3-taide-lx-8b-chat-alpha1:Q4_K_M"
-EMBEDDING_MODEL = "all-minilm"
+SettingController = SettingController()
+
+LLM_MODEL       = SettingController.setting['selected']['llm_model']
+EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
 
 QUERY_NUM   = 5
 CHROMA_PATH = "chroma"
