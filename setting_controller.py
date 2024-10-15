@@ -46,24 +46,14 @@ class SettingController():
 			self.setting['selected']['embedding_model'] = model_name
 
 			self.generate_setting(self.setting)
-			
+
 #-----------------------------------------------------------------------------#
 
 	def add_llm_model(self, model_name):
 
 		if len(model_name) > 0:
 
-			self.setting['options']['llm_models'].append(model_name)
-
-			self.generate_setting(self.setting)
-
-#-----------------------------------------------------------------------------#
-
-	def remove_llm_model(self, model_name):
-
-		if len(model_name) > 0:
-
-			self.setting['options']['llm_models'].remove(model_name)
+			self.setting['options']['llm_model'].append(model_name)
 
 			self.generate_setting(self.setting)
 
@@ -73,7 +63,17 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['options']['embedding_models'].append(model_name)
+			self.setting['options']['embedding_model'].append(model_name)
+
+			self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
+	def remove_llm_model(self, model_name):
+
+		if len(model_name) > 0:
+
+			self.setting['options']['llm_model'].remove(model_name)
 
 			self.generate_setting(self.setting)
 
@@ -83,7 +83,7 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['options']['embedding_models'].remove(model_name)
+			self.setting['options']['embedding_model'].remove(model_name)
 
 			self.generate_setting(self.setting)
 
