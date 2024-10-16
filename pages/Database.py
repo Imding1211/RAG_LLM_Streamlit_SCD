@@ -120,10 +120,10 @@ st.title("資料庫")
 database_status = st.empty()
 
 files = st.file_uploader(
-    "Upload a PDF file", 
+    "請選擇要上傳的PDF", 
     type="pdf", 
     accept_multiple_files=True, 
-    label_visibility="hidden",
+    label_visibility="visible",
     )
 
 col1, col2 = st.columns([9,1])
@@ -160,6 +160,8 @@ df_selected = df_event.iloc[select_id][['source', 'start_date']]
 df_result = df.merge(df_selected, on=['source', 'start_date'])
 
 st.divider()
+
+st.header("資料預覽")
 
 st.dataframe(
     df_result[['source', 'page', 'documents', 'start_date', 'end_date', 'version', 'latest']],

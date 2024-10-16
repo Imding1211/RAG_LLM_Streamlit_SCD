@@ -3,6 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 import pandas as pd
 import datetime
+import humanize
 import PyPDF2
 import uuid
 
@@ -56,7 +57,7 @@ class DatabaseController():
             'ids'        : data['ids'],
             'page'       : [meta['page'] for meta in data['metadatas']],
             'source'     : [meta['source'] for meta in data['metadatas']],
-            'size'       : [meta['size'] for meta in data['metadatas']],
+            'size'       : [humanize.naturalsize(meta['size'], binary=True) for meta in data['metadatas']],
             'start_date' : [meta['start_date'] for meta in data['metadatas']],
             'end_date'   : [meta['end_date'] for meta in data['metadatas']],
             'version'    : [meta['version'] for meta in data['metadatas']],
