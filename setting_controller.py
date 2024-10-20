@@ -33,6 +33,18 @@ class SettingController():
 
 #-----------------------------------------------------------------------------#
 
+	def load_setting(self):
+		with open('setting.json', 'r', encoding='utf-8') as setting_file:
+		    self.setting = json.load(setting_file)
+
+#-----------------------------------------------------------------------------#
+
+	def generate_setting(self, new_setting):
+		with open('setting.json', 'w', encoding='utf-8') as setting_file:
+			setting_file.write(json.dumps(new_setting, indent=4, ensure_ascii=False))
+
+#-----------------------------------------------------------------------------#
+
 	def generate_default_setting(self):
 		with open('setting.json', 'w', encoding='utf-8') as setting_file:
 			setting_file.write(json.dumps(self.default_setting, indent=4, ensure_ascii=False))
@@ -130,15 +142,3 @@ class SettingController():
 			self.setting['options']['embedding_model'].remove(model_name)
 
 			self.generate_setting(self.setting)
-
-#-----------------------------------------------------------------------------#
-
-	def generate_setting(self, new_setting):
-		with open('setting.json', 'w', encoding='utf-8') as setting_file:
-			setting_file.write(json.dumps(new_setting, indent=4, ensure_ascii=False))
-
-#-----------------------------------------------------------------------------#
-
-	def load_setting(self):
-		with open('setting.json', 'r', encoding='utf-8') as setting_file:
-		    self.setting = json.load(setting_file)
