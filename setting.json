@@ -1,14 +1,14 @@
 {
     "selected": {
         "prompt": "{context}\n\n---\n\n根據以上資料用繁體中文回答問題: {question}\n",
-        "llm_model": "llama3.2:latest",
-        "embedding_model": "all-minilm"
+        "llm_model": "gemma2:2b",
+        "embedding_model": "all-minilm",
+        "query_num": 5,
+        "database": "database/chroma"
     },
     "options": {
         "llm_model": [
-            "gemma2:2b",
-            "jcai/llama3-taide-lx-8b-chat-alpha1:Q4_K_M",
-            "llama3.2:latest"
+            "gemma2:2b"
         ],
         "embedding_model": [
             "all-minilm"

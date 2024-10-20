@@ -10,13 +10,13 @@ import streamlit as st
 
 SettingController = SettingController()
 
+PROMPT_TEMPLT   = SettingController.setting['selected']['prompt']
 LLM_MODEL       = SettingController.setting['selected']['llm_model']
 EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
+QUERY_NUM       = SettingController.setting['selected']['query_num']
+CHROMA_PATH     = SettingController.setting['selected']['database']
 
-QUERY_NUM   = 5
-CHROMA_PATH = "chroma"
-
-#=============================================================================#
+#-----------------------------------------------------------------------------#
 
 # 初始化Chroma向量存儲
 database = Chroma(
@@ -24,7 +24,7 @@ database = Chroma(
     embedding_function = OllamaEmbeddings(model=EMBEDDING_MODEL)
     )
 
-QueryController    = QueryController(database, LLM_MODEL, QUERY_NUM)
+QueryController    = QueryController(database, LLM_MODEL, QUERY_NUM, PROMPT_TEMPLT)
 DatabaseController = DatabaseController(database)
 
 #=============================================================================#
@@ -81,10 +81,8 @@ if question := st.chat_input("輸入問題"):
 #-----------------------------------------------------------------------------#
 
     with st.chat_message("assistant", avatar="🤖"):
-
         response = st.write_stream(QueryController.ollama_generator(st.session_state.messages))
-
-    st.caption(source_info)
+        st.caption(source_info)
 
     st.session_state.messages[-1]["content"] = question
 

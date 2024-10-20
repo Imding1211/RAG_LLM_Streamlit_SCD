@@ -1,15 +1,18 @@
 
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from database_controller import DatabaseController
+from setting_controller import SettingController
 from langchain_chroma import Chroma
 import streamlit as st
 
 #=============================================================================#
 
-EMBEDDING_MODEL = "all-minilm"
-CHROMA_PATH     = "chroma"
+SettingController = SettingController()
 
-#=============================================================================#
+EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
+CHROMA_PATH     = SettingController.setting['selected']['database']
+
+#-----------------------------------------------------------------------------#
 
 # 初始化Chroma向量存儲
 database = Chroma(
@@ -117,6 +120,8 @@ selected_config = {
 
 st.title("資料庫")
 
+#-----------------------------------------------------------------------------#
+
 database_status = st.empty()
 
 files = st.file_uploader(
@@ -125,6 +130,8 @@ files = st.file_uploader(
     accept_multiple_files=True, 
     label_visibility="visible",
     )
+
+#-----------------------------------------------------------------------------#
 
 col1, col2 = st.columns([9,1])
 
@@ -159,6 +166,8 @@ df_selected = df_event.iloc[select_id][['source', 'start_date']]
 
 df_result = df.merge(df_selected, on=['source', 'start_date'])
 
+#-----------------------------------------------------------------------------#
+
 st.divider()
 
 st.header("資料預覽")
@@ -184,3 +193,4 @@ if col2.button('刪除'):
         remove_status.update(label="資料刪除完成!", state="complete", expanded=False)
 
     st.rerun()
+

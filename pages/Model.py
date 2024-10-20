@@ -10,27 +10,19 @@ import ollama
 
 #=============================================================================#
 
-CHROMA_PATH = "chroma"
-
-#=============================================================================#
-
 SettingController = SettingController()
 
-selected_llm = SettingController.setting['selected']['llm_model']
-
-llm_models = SettingController.setting['options']['llm_model']
-
-selected_llm_index = llm_models.index(selected_llm)
-
-selected_embedding = SettingController.setting['selected']['embedding_model']
-
-embedding_models = SettingController.setting['options']['embedding_model']
-
+selected_llm             = SettingController.setting['selected']['llm_model']
+llm_models               = SettingController.setting['options']['llm_model']
+selected_llm_index       = llm_models.index(selected_llm)
+selected_embedding       = SettingController.setting['selected']['embedding_model']
+embedding_models         = SettingController.setting['options']['embedding_model']
 selected_embedding_index = embedding_models.index(selected_embedding)
 
-#-----------------------------------------------------------------------------#
-
 EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
+CHROMA_PATH     = SettingController.setting['selected']['database']
+
+#-----------------------------------------------------------------------------#
 
 database = Chroma(
     persist_directory  = CHROMA_PATH, 
@@ -39,10 +31,7 @@ database = Chroma(
 
 DatabaseController = DatabaseController(database)
 
-if len(DatabaseController.calculate_existing_ids()) == 0:
-	embedding_model_disabled = False
-else:
-	embedding_model_disabled = True
+embedding_model_disabled = True if len(DatabaseController.calculate_existing_ids()) != 0 else False
 
 #=============================================================================#
 
@@ -178,25 +167,29 @@ st.selectbox("請選擇語言模型",
 	llm_models, 
 	on_change=change_llm_model, 
 	key='llm_model', 
-	index=selected_llm_index)
+	index=selected_llm_index
+	)
 
 st.selectbox("請選擇嵌入模型", 
 	embedding_models, 
 	on_change=change_embedding_model, 
 	key='embedding_model', 
 	index=selected_embedding_index,
-	disabled=embedding_model_disabled)
+	disabled=embedding_model_disabled
+	)
 
 embedding_warning = st.empty()
 
 if embedding_model_disabled:
 	embedding_warning.warning('資料庫有資料時無法更換嵌入模型。', icon="⚠️")
 
+#-----------------------------------------------------------------------------#
+
 st.divider()
 
 st.header("Ollama 列表")
 
-col1, col2 = st.columns([9,1])
+col1, col2 = st.columns([8.5, 1.5])
 
 df_info = ollama_to_dataframe()
 
@@ -218,3 +211,6 @@ if col2.button("新增嵌入模型"):
 
 if col2.button("移除嵌入模型"):
 	remove_embedding_model()
+
+
+

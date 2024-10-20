@@ -7,19 +7,11 @@ import ollama
 
 class QueryController():
 
-    def __init__(self, database, llm_model, query_num):
-        self.database  = database
-        self.llm_model = llm_model
-        self.query_num = query_num
-
-        self.prompt_templt = """
-
-        {context}
-
-        ---
-
-        根據以上資料用繁體中文回答問題: {question}
-        """
+    def __init__(self, database, llm_model, query_num, prompt_templt):
+        self.database      = database
+        self.llm_model     = llm_model
+        self.query_num     = query_num
+        self.prompt_templt = prompt_templt
         
 #-----------------------------------------------------------------------------#
 

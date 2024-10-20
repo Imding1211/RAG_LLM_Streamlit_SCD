@@ -11,15 +11,17 @@ class SettingController():
 		    "selected": {
 		        "prompt": "{context}\n\n---\n\n根據以上資料用繁體中文回答問題: {question}\n",
 		        "llm_model": "gemma2:2b",
-		        "embedding_model": "all-minilm"
+		        "embedding_model": "all-minilm",
+		        "query_num": 5,
+		        "database": "database/chroma"
 		    },
 		    "options": {
-		        "llm_model": ["gemma2:2b", "jcai/llama3-taide-lx-8b-chat-alpha1:Q4_K_M"],
+		        "llm_model": ["gemma2:2b"],
 		        "embedding_model": ["all-minilm"]
 		    }
 		}
 
-		self.reload_setting()
+		self.load_setting()
 
 #-----------------------------------------------------------------------------#
 
@@ -46,6 +48,30 @@ class SettingController():
 			self.setting['selected']['embedding_model'] = model_name
 
 			self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
+	def change_query_num(self, query_num):
+
+		self.setting['selected']['query_num'] = query_num
+
+		self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
+	def change_database(self, database):
+
+		self.setting['selected']['database'] = 'database/'+database
+
+		self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
+	def change_prompt(self, prompt):
+
+		self.setting['selected']['prompt'] = prompt
+
+		self.generate_setting(self.setting)
 
 #-----------------------------------------------------------------------------#
 
@@ -95,6 +121,6 @@ class SettingController():
 
 #-----------------------------------------------------------------------------#
 
-	def reload_setting(self):
+	def load_setting(self):
 		with open('setting.json', 'r', encoding='utf-8') as setting_file:
 		    self.setting = json.load(setting_file)
