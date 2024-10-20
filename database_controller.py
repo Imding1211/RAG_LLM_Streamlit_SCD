@@ -1,5 +1,6 @@
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from setting_controller import SettingController
 from langchain_core.documents import Document
 import pandas as pd
 import datetime
@@ -18,11 +19,16 @@ class DatabaseController():
         self.time_now  = datetime.datetime.now(tz=self.time_zone)
         self.time_end  = datetime.datetime(9999, 12, 31, 0, 0, 0, tzinfo=self.time_zone)
 
+        self.SettingController = SettingController()
+
+        chunk_size    = self.SettingController.setting['text_splitter']['chunk_size']
+        chunk_overlap = self.SettingController.setting['text_splitter']['chunk_overlap']
+
         self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size         = 150,   # 每塊的大小
-            chunk_overlap      = 50,    # 每塊之間的重疊部分
-            length_function    = len,   # 用於計算塊長度的函數
-            is_separator_regex = False, # 是否使用正則表達式作為分隔符
+            chunk_size         = chunk_size,    # 每塊的大小
+            chunk_overlap      = chunk_overlap, # 每塊之間的重疊部分
+            length_function    = len,           # 用於計算塊長度的函數
+            is_separator_regex = False,         # 是否使用正則表達式作為分隔符
             )
 
 #-----------------------------------------------------------------------------#

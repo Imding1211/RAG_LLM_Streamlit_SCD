@@ -6,6 +6,10 @@
         "query_num": 5,
         "database": "database/chroma"
     },
+    "text_splitter": {
+        "chunk_size": 200,
+        "chunk_overlap": 50
+    },
     "options": {
         "llm_model": [
             "gemma2:2b"

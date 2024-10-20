@@ -15,9 +15,17 @@ class SettingController():
 		        "query_num": 5,
 		        "database": "database/chroma"
 		    },
+		    "text_splitter": {
+		        "chunk_size": 150,
+		        "chunk_overlap": 50
+		    },
 		    "options": {
-		        "llm_model": ["gemma2:2b"],
-		        "embedding_model": ["all-minilm"]
+		        "llm_model": [
+		            "gemma2:2b"
+		        ],
+		        "embedding_model": [
+		            "all-minilm"
+		        ]
 		    }
 		}
 
@@ -62,6 +70,16 @@ class SettingController():
 	def change_database(self, database):
 
 		self.setting['selected']['database'] = 'database/'+database
+
+		self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
+	def change_text_splitter(self, chunk_size, chunk_overlap):
+
+		self.setting['text_splitter']['chunk_size'] = int(chunk_size)
+
+		self.setting['text_splitter']['chunk_overlap'] = int(chunk_overlap)
 
 		self.generate_setting(self.setting)
 

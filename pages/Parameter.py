@@ -6,9 +6,11 @@ import streamlit as st
 
 SettingController = SettingController()
 
-selected_prompt    = SettingController.setting['selected']['prompt']
-selected_query_num = SettingController.setting['selected']['query_num']
-selected_database  = SettingController.setting['selected']['database']
+selected_prompt        = SettingController.setting['selected']['prompt']
+selected_query_num     = SettingController.setting['selected']['query_num']
+selected_database      = SettingController.setting['selected']['database']
+selected_chunk_size    = SettingController.setting['text_splitter']['chunk_size']
+selected_chunk_overlap = SettingController.setting['text_splitter']['chunk_overlap']
 
 #=============================================================================#
 
@@ -28,6 +30,8 @@ st.set_page_config(layout="wide")
 
 st.title("參數")
 
+#-----------------------------------------------------------------------------#
+
 query_num_container = st.container(border=True)
 
 query_num_container.slider("資料檢索數量",
@@ -36,6 +40,8 @@ query_num_container.slider("資料檢索數量",
 	key="query_num",
 	)
 
+#-----------------------------------------------------------------------------#
+
 database_container = st.container(border=True)
 
 database_container.text_input("資料庫名稱", 
@@ -43,9 +49,35 @@ database_container.text_input("資料庫名稱",
 	key="database",
 	)
 
-if database_container.button("確認"):
+if database_container.button("確認", key=1):
 	SettingController.change_database(st.session_state.database)
 	st.toast('資料庫名稱已更新。')
+
+#-----------------------------------------------------------------------------#
+
+text_splitter_container = st.container(border=True)
+
+text_splitter_container.text_input("文章切割大小", 
+	selected_chunk_size,
+	key="chunk_size",
+	)
+
+text_splitter_container.text_input("文章重疊大小", 
+	selected_chunk_overlap,
+	key="chunk_overlap",
+	)
+
+text_splitter_warning = text_splitter_container.empty()
+
+if text_splitter_container.button("確認", key=2):
+	if int(st.session_state.chunk_size) <= int(st.session_state.chunk_overlap):
+		text_splitter_warning.warning('文章重疊大小必須小於文章切割大小。', icon="⚠️")
+
+	else:
+		SettingController.change_text_splitter(st.session_state.chunk_size, st.session_state.chunk_overlap)
+		st.toast('文章切割設定已更新。')
+
+#-----------------------------------------------------------------------------#
 
 prompt_container = st.container(border=True)
 
@@ -57,7 +89,7 @@ prompt_container.text_area("自訂提示詞",
 
 prompt_warning = prompt_container.empty()
 
-if prompt_container.button("更新"):
+if prompt_container.button("確認", key=3):
 	
 	if "{context}" not in st.session_state.prompt and "{question}" not in st.session_state.prompt:
 		prompt_warning.warning('提示詞必須包含{context}與{question}。', icon="⚠️")

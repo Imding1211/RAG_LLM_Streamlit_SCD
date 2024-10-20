@@ -14,7 +14,6 @@ CHROMA_PATH     = SettingController.setting['selected']['database']
 
 #-----------------------------------------------------------------------------#
 
-# 初始化Chroma向量存儲
 database = Chroma(
     persist_directory  = CHROMA_PATH, 
     embedding_function = OllamaEmbeddings(model=EMBEDDING_MODEL)
