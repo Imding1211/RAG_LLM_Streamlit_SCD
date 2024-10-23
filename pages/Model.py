@@ -12,21 +12,19 @@ import ollama
 
 SettingController = SettingController()
 
-selected_llm             = SettingController.setting['selected']['llm_model']
-llm_models               = SettingController.setting['options']['llm_model']
+selected_llm             = SettingController.setting['llm_model']['selected']
+llm_models               = SettingController.setting['llm_model']['options']
 selected_llm_index       = llm_models.index(selected_llm)
-selected_embedding       = SettingController.setting['selected']['embedding_model']
-embedding_models         = SettingController.setting['options']['embedding_model']
+selected_embedding       = SettingController.setting['embedding_model']['selected']
+embedding_models         = SettingController.setting['embedding_model']['options']
 selected_embedding_index = embedding_models.index(selected_embedding)
-
-EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
-CHROMA_PATH     = SettingController.setting['selected']['database']
+chroma_path              = SettingController.setting['paramater']['database']
 
 #-----------------------------------------------------------------------------#
 
 database = Chroma(
-    persist_directory  = CHROMA_PATH, 
-    embedding_function = OllamaEmbeddings(model=EMBEDDING_MODEL)
+    persist_directory  = chroma_path, 
+    embedding_function = OllamaEmbeddings(model=selected_embedding)
     )
 
 DatabaseController = DatabaseController(database)
@@ -86,13 +84,13 @@ def ollama_to_dataframe():
     json_info = ollama.list()
 
     df_info = pd.DataFrame({
-    	'name': [info['name'] for info in json_info['models']],
-    	'model': [info['model'] for info in json_info['models']],
-    	'date': [info['modified_at'].split("T")[0]+" "+info['modified_at'].split("T")[1].split(".")[0] for info in json_info['models']],
-    	'size': [humanize.naturalsize(info['size'], binary=True) for info in json_info['models']],
-    	'format': [info['details']['format'] for info in json_info['models']],
-    	'family': [info['details']['family'] for info in json_info['models']],
-    	'parameter_size': [info['details']['parameter_size'] for info in json_info['models']],
+    	'name'              : [info['name'] for info in json_info['models']],
+    	'model'             : [info['model'] for info in json_info['models']],
+    	'date'              : [info['modified_at'].split("T")[0]+" "+info['modified_at'].split("T")[1].split(".")[0] for info in json_info['models']],
+    	'size'              : [humanize.naturalsize(info['size'], binary=True) for info in json_info['models']],
+    	'format'            : [info['details']['format'] for info in json_info['models']],
+    	'family'            : [info['details']['family'] for info in json_info['models']],
+    	'parameter_size'    : [info['details']['parameter_size'] for info in json_info['models']],
     	'quantization_level': [info['details']['quantization_level'] for info in json_info['models']]
         })
 

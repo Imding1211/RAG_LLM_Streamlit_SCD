@@ -6,9 +6,9 @@ import streamlit as st
 
 SettingController = SettingController()
 
-selected_prompt        = SettingController.setting['selected']['prompt']
-selected_query_num     = SettingController.setting['selected']['query_num']
-selected_database      = SettingController.setting['selected']['database']
+selected_prompt        = SettingController.setting['paramater']['prompt']
+selected_query_num     = SettingController.setting['paramater']['query_num']
+selected_database      = SettingController.setting['paramater']['database']
 selected_chunk_size    = SettingController.setting['text_splitter']['chunk_size']
 selected_chunk_overlap = SettingController.setting['text_splitter']['chunk_overlap']
 

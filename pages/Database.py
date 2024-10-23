@@ -9,8 +9,8 @@ import streamlit as st
 
 SettingController = SettingController()
 
-EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
-CHROMA_PATH     = SettingController.setting['selected']['database']
+EMBEDDING_MODEL = SettingController.setting['embedding_model']['selected']
+CHROMA_PATH     = SettingController.setting['paramater']['database']
 
 #-----------------------------------------------------------------------------#
 

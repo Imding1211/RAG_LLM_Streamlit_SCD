@@ -8,24 +8,26 @@ class SettingController():
 	def __init__(self):
 
 		self.default_setting = {
-		    "selected": {
+		    "paramater": {
 		        "prompt": "{context}\n\n---\n\n根據以上資料用繁體中文回答問題: {question}\n",
-		        "llm_model": "gemma2:2b",
-		        "embedding_model": "all-minilm",
 		        "query_num": 5,
 		        "database": "database/chroma"
+		    },
+		    "llm_model": {
+		        "selected": "gemma2:2b",
+		        "options": [
+		            "gemma2:2b"
+		        ]
+		    },
+		    "embedding_model": {
+		        "selected": "all-minilm",
+		        "options": [
+		            "all-minilm"
+		        ]
 		    },
 		    "text_splitter": {
 		        "chunk_size": 150,
 		        "chunk_overlap": 50
-		    },
-		    "options": {
-		        "llm_model": [
-		            "gemma2:2b"
-		        ],
-		        "embedding_model": [
-		            "all-minilm"
-		        ]
 		    }
 		}
 
@@ -55,7 +57,7 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['selected']['llm_model'] = model_name
+			self.setting['llm_model']['selected'] = model_name
 
 			self.generate_setting(self.setting)
 
@@ -65,15 +67,23 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['selected']['embedding_model'] = model_name
+			self.setting['embedding_model']['selected'] = model_name
 
 			self.generate_setting(self.setting)
 
 #-----------------------------------------------------------------------------#
 
+	def change_prompt(self, prompt):
+
+		self.setting['paramater']['prompt'] = prompt
+
+		self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
 	def change_query_num(self, query_num):
 
-		self.setting['selected']['query_num'] = query_num
+		self.setting['paramater']['query_num'] = query_num
 
 		self.generate_setting(self.setting)
 
@@ -81,7 +91,7 @@ class SettingController():
 
 	def change_database(self, database):
 
-		self.setting['selected']['database'] = 'database/'+database
+		self.setting['paramater']['database'] = 'database/'+database
 
 		self.generate_setting(self.setting)
 
@@ -97,19 +107,11 @@ class SettingController():
 
 #-----------------------------------------------------------------------------#
 
-	def change_prompt(self, prompt):
-
-		self.setting['selected']['prompt'] = prompt
-
-		self.generate_setting(self.setting)
-
-#-----------------------------------------------------------------------------#
-
 	def add_llm_model(self, model_name):
 
 		if len(model_name) > 0:
 
-			self.setting['options']['llm_model'].append(model_name)
+			self.setting['llm_model']['options'].append(model_name)
 
 			self.generate_setting(self.setting)
 
@@ -119,7 +121,7 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['options']['embedding_model'].append(model_name)
+			self.setting['embedding_model']['options'].append(model_name)
 
 			self.generate_setting(self.setting)
 
@@ -129,7 +131,7 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['options']['llm_model'].remove(model_name)
+			self.setting['llm_model']['options'].remove(model_name)
 
 			self.generate_setting(self.setting)
 
@@ -139,6 +141,6 @@ class SettingController():
 
 		if len(model_name) > 0:
 
-			self.setting['options']['embedding_model'].remove(model_name)
+			self.setting['embedding_model']['options'].remove(model_name)
 
 			self.generate_setting(self.setting)

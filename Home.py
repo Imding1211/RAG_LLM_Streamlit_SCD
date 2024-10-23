@@ -10,11 +10,11 @@ import streamlit as st
 
 SettingController = SettingController()
 
-PROMPT_TEMPLT   = SettingController.setting['selected']['prompt']
-LLM_MODEL       = SettingController.setting['selected']['llm_model']
-EMBEDDING_MODEL = SettingController.setting['selected']['embedding_model']
-QUERY_NUM       = SettingController.setting['selected']['query_num']
-CHROMA_PATH     = SettingController.setting['selected']['database']
+LLM_MODEL       = SettingController.setting['llm_model']['selected']
+EMBEDDING_MODEL = SettingController.setting['embedding_model']['selected']
+PROMPT_TEMPLT   = SettingController.setting['paramater']['prompt']
+QUERY_NUM       = SettingController.setting['paramater']['query_num']
+CHROMA_PATH     = SettingController.setting['paramater']['database']
 
 #-----------------------------------------------------------------------------#
 
