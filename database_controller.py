@@ -1,7 +1,9 @@
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.embeddings.ollama import OllamaEmbeddings
 from setting_controller import SettingController
 from langchain_core.documents import Document
+from langchain_chroma import Chroma
 import pandas as pd
 import datetime
 import humanize
@@ -12,17 +14,22 @@ import uuid
 
 class DatabaseController():
 
-    def __init__(self, database):
-        self.database  = database
+    def __init__(self):
+
+        self.SettingController = SettingController()
+        database_path          = self.SettingController.setting['paramater']['database']
+        embedding_model        = self.SettingController.setting['embedding_model']['selected']
+        chunk_size             = self.SettingController.setting['text_splitter']['chunk_size']
+        chunk_overlap          = self.SettingController.setting['text_splitter']['chunk_overlap']
+
+        self.database  = Chroma(
+            persist_directory  = database_path, 
+            embedding_function = OllamaEmbeddings(model=embedding_model)
+            )
 
         self.time_zone = datetime.timezone(datetime.timedelta(hours=8))
         self.time_now  = datetime.datetime.now(tz=self.time_zone)
         self.time_end  = datetime.datetime(9999, 12, 31, 0, 0, 0, tzinfo=self.time_zone)
-
-        self.SettingController = SettingController()
-
-        chunk_size    = self.SettingController.setting['text_splitter']['chunk_size']
-        chunk_overlap = self.SettingController.setting['text_splitter']['chunk_overlap']
 
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size         = chunk_size,    # 每塊的大小

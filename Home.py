@@ -1,30 +1,22 @@
 
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from database_controller import DatabaseController
 from setting_controller import SettingController
 from query_controller import QueryController
-from langchain_chroma import Chroma
 import streamlit as st
 
 #=============================================================================#
 
 SettingController = SettingController()
+LLM_MODEL         = SettingController.setting['llm_model']['selected']
+EMBEDDING_MODEL   = SettingController.setting['embedding_model']['selected']
+PROMPT_TEMPLT     = SettingController.setting['paramater']['prompt']
+QUERY_NUM         = SettingController.setting['paramater']['query_num']
+CHROMA_PATH       = SettingController.setting['paramater']['database']
 
-LLM_MODEL       = SettingController.setting['llm_model']['selected']
-EMBEDDING_MODEL = SettingController.setting['embedding_model']['selected']
-PROMPT_TEMPLT   = SettingController.setting['paramater']['prompt']
-QUERY_NUM       = SettingController.setting['paramater']['query_num']
-CHROMA_PATH     = SettingController.setting['paramater']['database']
+DatabaseController = DatabaseController()
+database           = DatabaseController.database
 
-#-----------------------------------------------------------------------------#
-
-database = Chroma(
-    persist_directory  = CHROMA_PATH, 
-    embedding_function = OllamaEmbeddings(model=EMBEDDING_MODEL)
-    )
-
-QueryController    = QueryController(database, LLM_MODEL, QUERY_NUM, PROMPT_TEMPLT)
-DatabaseController = DatabaseController(database)
+QueryController = QueryController()
 
 #=============================================================================#
 

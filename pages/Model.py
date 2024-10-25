@@ -1,8 +1,6 @@
 
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from database_controller import DatabaseController
 from setting_controller import SettingController
-from langchain_chroma import Chroma
 import streamlit as st
 import pandas as pd
 import humanize
@@ -10,25 +8,15 @@ import ollama
 
 #=============================================================================#
 
-SettingController = SettingController()
-
+SettingController        = SettingController()
 selected_llm             = SettingController.setting['llm_model']['selected']
 llm_models               = SettingController.setting['llm_model']['options']
 selected_llm_index       = llm_models.index(selected_llm)
 selected_embedding       = SettingController.setting['embedding_model']['selected']
 embedding_models         = SettingController.setting['embedding_model']['options']
 selected_embedding_index = embedding_models.index(selected_embedding)
-chroma_path              = SettingController.setting['paramater']['database']
 
-#-----------------------------------------------------------------------------#
-
-database = Chroma(
-    persist_directory  = chroma_path, 
-    embedding_function = OllamaEmbeddings(model=selected_embedding)
-    )
-
-DatabaseController = DatabaseController(database)
-
+DatabaseController       = DatabaseController()
 embedding_model_disabled = True if len(DatabaseController.calculate_existing_ids()) != 0 else False
 
 #=============================================================================#

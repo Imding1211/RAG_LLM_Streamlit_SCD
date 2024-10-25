@@ -4,8 +4,7 @@ import streamlit as st
 
 #=============================================================================#
 
-SettingController = SettingController()
-
+SettingController      = SettingController()
 selected_prompt        = SettingController.setting['paramater']['prompt']
 selected_query_num     = SettingController.setting['paramater']['query_num']
 selected_database      = SettingController.setting['paramater']['database']

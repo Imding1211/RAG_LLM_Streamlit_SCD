@@ -1,25 +1,10 @@
 
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from database_controller import DatabaseController
-from setting_controller import SettingController
-from langchain_chroma import Chroma
 import streamlit as st
 
 #=============================================================================#
 
-SettingController = SettingController()
-
-EMBEDDING_MODEL = SettingController.setting['embedding_model']['selected']
-CHROMA_PATH     = SettingController.setting['paramater']['database']
-
-#-----------------------------------------------------------------------------#
-
-database = Chroma(
-    persist_directory  = CHROMA_PATH, 
-    embedding_function = OllamaEmbeddings(model=EMBEDDING_MODEL)
-    )
-
-DatabaseController = DatabaseController(database)
+DatabaseController = DatabaseController()
 
 #=============================================================================#
 

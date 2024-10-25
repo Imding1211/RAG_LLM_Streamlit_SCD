@@ -1,5 +1,7 @@
 
 from langchain_core.prompts import ChatPromptTemplate
+from database_controller import DatabaseController
+from setting_controller import SettingController
 from typing import Dict, Generator
 import ollama
 
@@ -7,12 +9,16 @@ import ollama
 
 class QueryController():
 
-    def __init__(self, database, llm_model, query_num, prompt_templt):
-        self.database      = database
-        self.llm_model     = llm_model
-        self.query_num     = query_num
-        self.prompt_templt = prompt_templt
-        
+    def __init__(self):
+
+        self.SettingController = SettingController()
+        self.llm_model         = self.SettingController.setting['llm_model']['selected']
+        self.query_num         = self.SettingController.setting['paramater']['query_num']
+        self.prompt_templt     = self.SettingController.setting['paramater']['prompt']
+
+        self.DatabaseController = DatabaseController()
+        self.database           = self.DatabaseController.database
+
 #-----------------------------------------------------------------------------#
 
     def generate_results(self, query_text):
