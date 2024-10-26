@@ -19,5 +19,8 @@
     "text_splitter": {
         "chunk_size": 150,
         "chunk_overlap": 50
+    },
+    "server": {
+        "base_url": "http://localhost:11434"
     }
 }

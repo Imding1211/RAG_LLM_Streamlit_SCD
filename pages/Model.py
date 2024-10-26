@@ -1,6 +1,7 @@
 
 from database_controller import DatabaseController
 from setting_controller import SettingController
+from ollama import Client
 import streamlit as st
 import pandas as pd
 import humanize
@@ -15,6 +16,7 @@ selected_llm_index       = llm_models.index(selected_llm)
 selected_embedding       = SettingController.setting['embedding_model']['selected']
 embedding_models         = SettingController.setting['embedding_model']['options']
 selected_embedding_index = embedding_models.index(selected_embedding)
+client                   = Client(host=SettingController.setting['server']['base_url'])
 
 DatabaseController       = DatabaseController()
 embedding_model_disabled = True if len(DatabaseController.calculate_existing_ids()) != 0 else False
@@ -67,9 +69,9 @@ def remove_embedding_model():
 
 #-----------------------------------------------------------------------------#
 
-def ollama_to_dataframe():
+def ollama_to_dataframe(client):
 
-    json_info = ollama.list()
+    json_info = client.list()
 
     df_info = pd.DataFrame({
     	'name'              : [info['name'] for info in json_info['models']],
@@ -177,7 +179,7 @@ st.header("Ollama 列表")
 
 col1, col2 = st.columns([8.5, 1.5])
 
-df_info = ollama_to_dataframe()
+df_info = ollama_to_dataframe(client)
 
 col1.dataframe(
 	df_info,

@@ -28,6 +28,9 @@ class SettingController():
 		    "text_splitter": {
 		        "chunk_size": 150,
 		        "chunk_overlap": 50
+		    },
+		    "server": {
+		        "base_url": "http://localhost:11434"
 		    }
 		}
 
@@ -102,6 +105,14 @@ class SettingController():
 		self.setting['text_splitter']['chunk_size'] = int(chunk_size)
 
 		self.setting['text_splitter']['chunk_overlap'] = int(chunk_overlap)
+
+		self.generate_setting(self.setting)
+
+#-----------------------------------------------------------------------------#
+
+	def change_base_url(self, base_url):
+
+		self.setting['server']['base_url'] = base_url
 
 		self.generate_setting(self.setting)
 

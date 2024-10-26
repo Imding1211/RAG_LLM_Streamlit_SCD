@@ -10,6 +10,7 @@ selected_query_num     = SettingController.setting['paramater']['query_num']
 selected_database      = SettingController.setting['paramater']['database']
 selected_chunk_size    = SettingController.setting['text_splitter']['chunk_size']
 selected_chunk_overlap = SettingController.setting['text_splitter']['chunk_overlap']
+selected_base_url      = SettingController.setting['server']['base_url']
 
 #=============================================================================#
 
@@ -103,3 +104,15 @@ if prompt_container.button("確認", key=3):
 		SettingController.change_prompt(st.session_state.prompt)
 		st.toast('提示詞已更新。')
 
+#-----------------------------------------------------------------------------#
+
+base_url_container = st.container(border=True)
+
+base_url_container.text_input("URL", 
+	selected_base_url,
+	key="base_url",
+	)
+
+if base_url_container.button("確認", key=4):
+	SettingController.change_base_url(st.session_state.base_url)
+	st.toast('URL已更新。')

@@ -21,10 +21,11 @@ class DatabaseController():
         embedding_model        = self.SettingController.setting['embedding_model']['selected']
         chunk_size             = self.SettingController.setting['text_splitter']['chunk_size']
         chunk_overlap          = self.SettingController.setting['text_splitter']['chunk_overlap']
+        base_url               = self.SettingController.setting['server']['base_url']
 
         self.database  = Chroma(
             persist_directory  = database_path, 
-            embedding_function = OllamaEmbeddings(model=embedding_model)
+            embedding_function = OllamaEmbeddings(base_url=base_url, model=embedding_model)
             )
 
         self.time_zone = datetime.timezone(datetime.timedelta(hours=8))
