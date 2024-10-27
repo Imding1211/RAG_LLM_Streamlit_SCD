@@ -1,8 +1,12 @@
 
 from database_controller import DatabaseController
+from setting_controller import SettingController
 import streamlit as st
 
 #=============================================================================#
+
+SettingController = SettingController()
+database_path     = SettingController.setting['paramater']['database']
 
 DatabaseController = DatabaseController()
 
@@ -29,6 +33,18 @@ event_config = {
         max_chars=100, 
         width="small"
     ),
+    "chunk_size": st.column_config.TextColumn(
+        "切割長度", 
+        help="文章切割長度", 
+        max_chars=100, 
+        width="small"
+    ),
+    "chunk_overlap": st.column_config.TextColumn(
+        "重疊長度", 
+        help="區塊重疊長度", 
+        max_chars=100, 
+        width="small"
+    ),
     "start_date": st.column_config.TextColumn(
         "開始時間", 
         help="資料開始時間", 
@@ -48,7 +64,7 @@ event_config = {
         width="small"
     ),
     "latest": st.column_config.TextColumn(
-        "是否為最新資料", 
+        "最新資料", 
         help="資料內容是否為最新", 
         max_chars=100, 
         width="small"
@@ -104,6 +120,8 @@ selected_config = {
 
 st.title("資料庫")
 
+st.write("正在使用的資料庫：" + database_path.split('/')[-1])
+
 #-----------------------------------------------------------------------------#
 
 database_status = st.empty()
@@ -131,7 +149,7 @@ if col2.button("更新"):
 
 df = DatabaseController.database_to_dataframes()
 
-df_event = df.loc[df.groupby(['source', 'start_date'])['page'].idxmax(), ['source', 'page', 'size', 'start_date', 'end_date', 'version', 'latest']]
+df_event = df.loc[df.groupby(['source', 'start_date'])['page'].idxmax(), ['source', 'page', 'size', 'chunk_size', 'chunk_overlap', 'start_date', 'end_date', 'version', 'latest']]
 
 df_event = df_event.sort_values(by='start_date', ascending=False)
 

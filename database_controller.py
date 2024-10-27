@@ -17,10 +17,10 @@ class DatabaseController():
     def __init__(self):
 
         self.SettingController = SettingController()
+        self.chunk_size        = self.SettingController.setting['text_splitter']['chunk_size']
+        self.chunk_overlap     = self.SettingController.setting['text_splitter']['chunk_overlap']
         database_path          = self.SettingController.setting['paramater']['database']
         embedding_model        = self.SettingController.setting['embedding_model']['selected']
-        chunk_size             = self.SettingController.setting['text_splitter']['chunk_size']
-        chunk_overlap          = self.SettingController.setting['text_splitter']['chunk_overlap']
         base_url               = self.SettingController.setting['server']['base_url']
 
         self.database  = Chroma(
@@ -33,10 +33,10 @@ class DatabaseController():
         self.time_end  = datetime.datetime(9999, 12, 31, 0, 0, 0, tzinfo=self.time_zone)
 
         self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size         = chunk_size,    # 每塊的大小
-            chunk_overlap      = chunk_overlap, # 每塊之間的重疊部分
-            length_function    = len,           # 用於計算塊長度的函數
-            is_separator_regex = False,         # 是否使用正則表達式作為分隔符
+            chunk_size         = self.chunk_size,
+            chunk_overlap      = self.chunk_overlap,
+            length_function    = len,
+            is_separator_regex = False,
             )
 
 #-----------------------------------------------------------------------------#
@@ -68,15 +68,17 @@ class DatabaseController():
         data = self.database.get()
 
         df = pd.DataFrame({
-            'ids'        : data['ids'],
-            'page'       : [meta['page'] for meta in data['metadatas']],
-            'source'     : [meta['source'] for meta in data['metadatas']],
-            'size'       : [humanize.naturalsize(meta['size'], binary=True) for meta in data['metadatas']],
-            'start_date' : [meta['start_date'] for meta in data['metadatas']],
-            'end_date'   : [meta['end_date'] for meta in data['metadatas']],
-            'version'    : [meta['version'] for meta in data['metadatas']],
-            'latest'     : [meta['latest'] for meta in data['metadatas']],
-            'documents'  : data['documents']
+            'ids'           : data['ids'],
+            'page'          : [meta['page'] for meta in data['metadatas']],
+            'source'        : [meta['source'] for meta in data['metadatas']],
+            'size'          : [humanize.naturalsize(meta['size'], binary=True) for meta in data['metadatas']],
+            'chunk_size'    : [meta['chunk_size'] for meta in data['metadatas']],
+            'chunk_overlap' : [meta['chunk_overlap'] for meta in data['metadatas']],
+            'start_date'    : [meta['start_date'] for meta in data['metadatas']],
+            'end_date'      : [meta['end_date'] for meta in data['metadatas']],
+            'version'       : [meta['version'] for meta in data['metadatas']],
+            'latest'        : [meta['latest'] for meta in data['metadatas']],
+            'documents'     : data['documents']
         })
 
         return df
@@ -96,13 +98,15 @@ class DatabaseController():
             content = pdf.pages[page].extract_text()
 
             metadata = {
-            "source"     : pdf.stream.name, 
-            "page"       : page + 1, 
-            "size"       : pdf.stream.size,
-            "start_date" : start_date,
-            "end_date"   : end_date,
-            "version"    : current_version + 1,
-            "latest"     : True
+            "source"        : pdf.stream.name, 
+            "page"          : page + 1, 
+            "size"          : pdf.stream.size,
+            "chunk_size"    : self.chunk_size,
+            "chunk_overlap" : self.chunk_overlap,
+            "start_date"    : start_date,
+            "end_date"      : end_date,
+            "version"       : current_version + 1,
+            "latest"        : True
             }
 
             documents = self.text_splitter.create_documents([content], [metadata])
@@ -126,13 +130,15 @@ class DatabaseController():
             if old_metadata['version'] == current_version:
 
                 updated_metedata = {
-                "source"     : old_metadata['source'], 
-                "page"       : old_metadata['page'], 
-                "size"       : old_metadata['size'],
-                "start_date" : old_metadata['start_date'],
-                "end_date"   : date,
-                "version"    : old_metadata['version'],
-                "latest"     : latest
+                "source"        : old_metadata['source'], 
+                "page"          : old_metadata['page'], 
+                "size"          : old_metadata['size'],
+                "chunk_size"    : old_metadata['chunk_size'],
+                "chunk_overlap" : old_metadata['chunk_overlap'],
+                "start_date"    : old_metadata['start_date'],
+                "end_date"      : date,
+                "version"       : old_metadata['version'],
+                "latest"        : latest
                 }
 
                 new_documents.append(Document(page_content=old_document, metadata=updated_metedata))

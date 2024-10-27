@@ -57,12 +57,12 @@ if database_container.button("確認", key=1):
 
 text_splitter_container = st.container(border=True)
 
-text_splitter_container.text_input("文章切割大小", 
+text_splitter_container.text_input("文章切割長度", 
 	selected_chunk_size,
 	key="chunk_size",
 	)
 
-text_splitter_container.text_input("文章重疊大小", 
+text_splitter_container.text_input("區塊重疊長度", 
 	selected_chunk_overlap,
 	key="chunk_overlap",
 	)
