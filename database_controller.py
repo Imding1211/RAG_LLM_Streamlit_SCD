@@ -85,12 +85,6 @@ class DatabaseController():
 
 #-----------------------------------------------------------------------------#
 
-    def clear_database(self, delete_ids):
-        if delete_ids:
-            self.database.delete(ids=delete_ids)
-
-#-----------------------------------------------------------------------------#
-
     def add_chroma(self, pdf, start_date, end_date, current_version):
 
         for page in range(len(pdf.pages)):
@@ -145,6 +139,12 @@ class DatabaseController():
                 new_ids.append(ids)
 
         self.database.update_documents(ids=new_ids, documents=new_documents)
+
+#-----------------------------------------------------------------------------#
+
+    def clear_database(self, delete_ids):
+        if delete_ids:
+            self.database.delete(ids=delete_ids)
 
 #-----------------------------------------------------------------------------#
 
