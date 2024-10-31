@@ -1,13 +1,15 @@
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from setting_controller import SettingController
 from langchain_core.documents import Document
+from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 import pandas as pd
+import tempfile
 import datetime
 import humanize
 import PyPDF2
+import shutil
 import uuid
 
 #=============================================================================#
@@ -176,3 +178,17 @@ class DatabaseController():
 
                 self.update_chroma(rollback_source, end_date, True, version_list[1])
 
+
+#-----------------------------------------------------------------------------#
+
+    def save_PDF(self, file):
+
+        save_path = "save_PDF/"
+
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
+            temp_pdf.write(in_file.getvalue())
+            temp_pdf.seek(0)
+            filename = temp_pdf.name
+
+        shutil.move(filename, save_path+in_file.name)
+        print(f"文件已成功保存至: {save_path+in_file.name}")

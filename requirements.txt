@@ -1,4 +1,4 @@
-langchain_community
+langchain-ollama
 langchain_chroma
 streamlit
 humanize
