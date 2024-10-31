@@ -143,6 +143,7 @@ if col2.button("更新"):
 
         for file in files:
             DatabaseController.add_database(file)
+            DatabaseController.save_PDF(file)
             st.write(f"{file.name}更新完成。")
 
         update_status.update(label="資料更新完成!", state="complete", expanded=False)

@@ -178,17 +178,19 @@ class DatabaseController():
 
                 self.update_chroma(rollback_source, end_date, True, version_list[1])
 
-
 #-----------------------------------------------------------------------------#
 
     def save_PDF(self, file):
 
         save_path = "save_PDF/"
 
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
-            temp_pdf.write(in_file.getvalue())
-            temp_pdf.seek(0)
-            filename = temp_pdf.name
+        current_version = self.get_version_list(PyPDF2.PdfReader(file).stream.name)[0]
 
-        shutil.move(filename, save_path+in_file.name)
-        print(f"文件已成功保存至: {save_path+in_file.name}")
+        save_pdf_name = file.name.split('.')[0] + '_v' + str(current_version) + '.' + file.name.split('.')[-1]
+
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
+            temp_pdf.write(file.getvalue())
+            temp_pdf.seek(0)
+            temp_pdf_name = temp_pdf.name
+
+        shutil.move(temp_pdf_name, save_path+save_pdf_name)

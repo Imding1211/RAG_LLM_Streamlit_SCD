@@ -25,10 +25,16 @@ class QueryController():
 
     def generate_results(self, query_text):
         
-        # 進行相似度搜索
         query_results = self.database.similarity_search_with_score(query_text, k=self.query_num, filter={"latest": True})
 
-        query_sources = list(set([doc.metadata['source'] for doc, _score in query_results]))
+        sources = []
+        for doc, _score in query_results:
+
+            source_name = doc.metadata['source'].split('.')[0] + '_v' + str(doc.metadata['version']) + '.' + doc.metadata['source'].split('.')[-1]
+
+            sources.append(source_name)
+
+        query_sources = list(set(sources))
 
         return query_results, query_sources
 
@@ -36,7 +42,6 @@ class QueryController():
 
     def generate_prompt(self, query_text, query_results):
         
-        # 構建上下文文本
         context_text    = "\n\n---\n\n".join([doc.page_content for doc, _score in query_results])
         prompt_template = ChatPromptTemplate.from_template(self.prompt_templt)
         prompt          = prompt_template.format(context=context_text, question=query_text)
