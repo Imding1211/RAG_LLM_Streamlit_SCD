@@ -3,5 +3,4 @@ langchain-ollama
 langchain_chroma
 streamlit
 humanize
-ollama
 PyPDF2
